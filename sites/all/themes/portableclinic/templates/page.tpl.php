@@ -123,20 +123,9 @@
 
     <?php print render($page['header']); ?>
 
-    <?php if ($main_menu): ?>
+     <?php if ($page['main_menu']): ?>
       <div id="main-menu" class="navigation">
-        <?php print theme('links__system_main_menu', array(
-          'links' => $main_menu,
-          'attributes' => array(
-            'id' => 'main-menu-links',
-            'class' => array('links', 'clearfix'),
-          ),
-          'heading' => array(
-            'text' => t('Main menu'),
-            'level' => 'h2',
-            'class' => array('element-invisible'),
-          ),
-        )); ?>
+          <?php print render($page['main_menu']); ?>
       </div> <!-- /#main-menu -->
     <?php endif; ?>
 

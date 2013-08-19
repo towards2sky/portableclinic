@@ -9,51 +9,66 @@
  * Implements hook_menu().
  */
 function user_generate_menu() {
-  $items['login_key_generate'] = array(
-    'title' => t('Create User Login Key'),
+  $items['generate_login_key'] = array(
+    'title' => t('Generate Login Key'),
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('login_key_generate_form'),
+    'page arguments' => array('generate_login_key_form'),
     'access arguments' => array('administer Key Generator'),
     'type' => MENU_NORMAL_ITEM,  
   );
-   
+  $items['generate_single_key'] = array(
+    'title' => t('Generate Single Key'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('generate_single_key_form'),
+    'access arguments' => array('administer Key Generator'),
+    'type' => MENU_NORMAL_ITEM,  
+  ); 
+  
+  $items['login'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('login_by_accesskey_form'),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,  
+  );
   return $items;
 }
 
 
 
-function login_key_generate_form(){
+function login_by_accesskey_form(){
     
-   $form['num'] = array(
-    '#type' => 'textfield',
-    '#title' => t('How many users would you like to generate?'),
-    '#default_value' => 50,
-    '#size' => 10,
-  );
-  $form['kill_users'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Delete all users (except user id 1) before generating new users.'),
-    '#default_value' => FALSE,
-  );
-  $options = user_roles(TRUE);
-  unset($options[DRUPAL_AUTHENTICATED_RID]);
-  $form['roles'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Which roles should the users receive?'),
-    '#description' => t('Users always receive the <em>authenticated user</em> role.'),
-    '#options' => $options,
+    $form['username'] = array(
+    '#type' => 'password',
+    '#title' => t('Enter Access Key'),
+    '#required' => TRUE,
+    '#size' => 30,
   );
 
-  $options = array(1 => t('Now'));
-  foreach (array(3600, 86400, 604800, 2592000, 31536000) as $interval) {
-    $options[$interval] = format_interval($interval, 1) . ' ' . t('ago');
-  }
-  $form['time_range'] = array(
-    '#type' => 'select',
-    '#title' => t('How old should user accounts be?'),
-    '#description' => t('User ages will be distributed randomly from the current time, back to the selected time.'),
-    '#options' => $options,
-    '#default_value' => 604800,
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Login'),
+  );
+  return $form;
+    
+}
+
+function login_by_accesskey_form_submit($form_id, &$form_state){
+    global $user;
+    $username = $form_state['values']['username'];
+    $user = user_load(1);
+    
+//    print '<pre>';
+//    print_r($user); exit;
+}
+
+
+function generate_login_key_form(){
+
+   $form['num'] = array(
+    '#type' => 'textfield',
+    '#title' => t('How many users access would you like to generate?'),
+    '#default_value' => 10,
+    '#size' => 10,
   );
 
   $form['submit'] = array(
@@ -64,15 +79,61 @@ function login_key_generate_form(){
 }
 
 
+function generate_single_key_form(){
+    
+        $form['accesskey'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Enter desirable key name would you like to generate?'),
+            '#size' => 50,
+            '#required' => TRUE,
+        );
+        $form['submit'] = array(
+            '#type' => 'submit',
+            '#value' => t('Generate'),
+        );
+        
+        $form['#validate'][0] = 'accesskey_validation';
+        return $form;
+        
+}
+   
+function accesskey_validation( &$form, &$form_state ){
+   $accesskey = trim($form_state['values']['accesskey']);
+   
+   $output['msg'] = '';
+   if(!$accesskey){
+     $output['msg'] = t('Enter value of access key name.');   
+   } else {
+       
+        $ret = _user_generate_check_is_accesskey_exists($accesskey);
+        if($ret){
+      $output['msg'] = t('Acess key already used.');     
+        }
+   }
+
+   
+   
+   if($output['msg']){
+       form_set_error('accesskey', $output['msg']);
+   }  
+}
+function generate_single_key_submit($form_id, &$form_state){
+  $username = $form_state['values']['accesskey'];
+  portableclinic_users_create($values['num'], $time_range, $roles, $username );
+  
+}   
+
 /**
  * hook_submit();
- * 
  * @param type $form_id
  * @param type $form_state 
  */
-function login_key_generate_form_submit($form_id, &$form_state) {
+function generate_login_key_form_submit($form_id, &$form_state) {
+  module_load_include('inc', 'devel_generate');
   $values = $form_state['values'];
-  portableclinic_users_create($values['num'], $values['kill_users'], $values['time_range'], $values['roles']);
+  $time_range = 1;
+  $roles = array('0' => 0,'4' => 4);   
+  portableclinic_users_create($values['num'], $time_range, $roles );
 }
 
 /**
@@ -88,29 +149,16 @@ function login_key_generate_form_submit($form_id, &$form_state) {
  *  An array of role IDs that the users should receive.
  */
 
-function portableclinic_users_create($num, $kill, $age = 0, $roles = array()) {
-  $url = parse_url($GLOBALS['base_url']);
-  if ($kill) {
-    $uids = db_select('users', 'u')
-            ->fields('u', array('uid'))
-            ->condition('uid', 1, '>')
-            ->execute()
-            ->fetchAllAssoc('uid');
-    user_delete_multiple(array_keys($uids));
-    drupal_set_message(format_plural(count($uids), '1 user deleted', '@count users deleted.'));
-  }
-  // Determine if we should create user pictures.
-  $pic_config = FALSE;
-  module_load_include('inc', 'system', 'image.gd');
-  if (variable_get('user_pictures', 0) && function_exists('image_gd_check_settings') && image_gd_check_settings()) {
-    $pic_config['path'] = variable_get('user_picture_path', 'pictures');
-    list($pic_config['width'], $pic_config['height']) = explode('x', variable_get('user_picture_dimensions', '85x85'));
-  }
-
+function portableclinic_users_create($num, $age = 0, $roles = array(), $username = '') {
+ 
   if ($num > 0) {
     $names = array();
     while (count($names) < $num) {
+        if(!$username){
       $name = devel_generate_word(mt_rand(6, 12));
+        } else {
+      $name =  $username;
+        }
       $names[$name] = '';
     }
 
@@ -121,71 +169,22 @@ function portableclinic_users_create($num, $kill, $age = 0, $roles = array()) {
       $edit = array(
         'uid'     => NULL, 
         'name'    => $name,
-        'pass'    => 'demo', // No password avoids user_hash_password() which is expensive.
-        'mail'    => $name . '@' . $url['host'],
+        'pass'    => 'demo',
+        'mail'    => 'xyz@acb.com',
         'status'  => 1,
-        'created' => REQUEST_TIME - mt_rand(0, $age),
+        'created' => REQUEST_TIME,
         'roles' => drupal_map_assoc($roles),
-        'devel_generate' => TRUE // A flag to let hook_user_* know that this is a generated user.
+        'language' => LANGUAGE_NONE,
       );
-
-      // Populate all core fields on behalf of field.module
-      module_load_include('inc', 'devel_generate', 'devel_generate.fields');
-      $edit = (object) $edit;
-      $edit->language = LANGUAGE_NONE;
-      devel_generate_fields($edit, 'user', 'user');
-      $edit = (array) $edit;
-
       $account = user_save(drupal_anonymous_user(), $edit);
-
-      if ($pic_config) {
-        // Since the image.module should scale the picture just pick an
-        // arbitrary size that it's too big for our font.
-        $im = imagecreatetruecolor(200, 200);
-
-        // Randomize the foreground using the md5 of the user id, then invert it
-        // for the background color so there's enough contrast to read the text.
-        $parts = array_map('hexdec', str_split(md5($account->uid), 2));
-        $fg = imagecolorallocate($im, $parts[1], $parts[3], $parts[5]);
-        $bg = imagecolorallocate($im, 255 - $parts[0], 255 - $parts[1], 255 - $parts[2]);
-
-        // Fill the background then print their user info.
-        imagefill($im, 0, 0, $bg);
-        imagestring($im, 5, 5, 5, "#" . $account->uid, $fg);
-        imagestring($im, 5, 5, 25, $account->name, $fg);
-
-
-        // Create an empty, managed file where we want the user's picture to
-        // be so we can have GD overwrite it with the image.
-        $picture_directory =  variable_get('file_default_scheme', 'public') . '://' . variable_get('user_picture_path', 'pictures');
-        file_prepare_directory($picture_directory, FILE_CREATE_DIRECTORY);
-        $destination = file_stream_wrapper_uri_normalize($picture_directory . '/picture-' . $account->uid . '.png');
-        $file = file_save_data('', $destination);
-
-        // GD doesn't like stream wrapped paths so convert the URI to a normal
-        // file system path.
-        if (isset($file) && $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri)) {
-          imagepng($im, $wrapper->realpath());
-        }
-        imagedestroy($im);
-
-        // Clear the cached filesize, set the owner and MIME-type then re-save
-        // the file.
-        clearstatcache();
-        $file->uid = $account->uid;
-        $file->filemime = 'image/png';
-        $file = file_save($file);
-
-        // Save the user record with the new picture.
-        $edit = (array) $account;
-        $edit['picture'] = $file;
-        
-        echo '<pre>';
-        print_r($edit);
-        exit;
-        user_save($account, $edit);
-      }
     }
   }
-  drupal_set_message(t('!num_users created.', array('!num_users' => format_plural($num, '1 user', '@count users'))));
+  drupal_set_message(t('!num_users created.', array('!num_users' => format_plural($num, '1 User Login Key', '@count User Login Keys'))));
+}
+
+
+
+
+function _user_generate_check_is_accesskey_exists($accesskey) {
+  return db_query("SELECT COUNT(u.name) count FROM {users} u WHERE LOWER(u.name) = LOWER(:username)", array(':username' => $accesskey))->fetchField();
 }
