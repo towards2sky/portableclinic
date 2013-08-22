@@ -35,6 +35,31 @@ function user_generate_menu() {
 
 
 
+
+function user_generate_form_alter(&$form, &$form_state, $form_id) {
+    if($form_id == 'add_medical_condition_node_form'){
+      if(isset($form_state['node']->nid) && $form_state['node']->nid) {
+            $form['actions']['submit']['#submit'][] ='node_edit_custom_submit';
+        }else {
+            $form['actions']['submit']['#submit'][] ='node_add_custom_submit'; 
+        }
+      
+    }
+}
+
+function node_add_custom_submit($form, &$form_state) {
+        unset($_GET['destination']);
+        unset($_REQUEST['edit']['destination']); 
+        $form_state['redirect'] = 'node/add/add-medical-condition';
+}
+
+function node_edit_custom_submit($form, &$form_state) {
+        unset($_GET['destination']);
+        unset($_REQUEST['edit']['destination']); 
+        $form_state['redirect'] = 'list-medical-conditions';
+}
+
+
 function login_by_accesskey_form(){
     
     $form['username'] = array(
@@ -54,8 +79,8 @@ function login_by_accesskey_form(){
 
 function login_by_accesskey_form_submit($form_id, &$form_state){
     global $user;
-    $username = $form_state['values']['username'];
-    $user = user_load(1);
+   // $username = $form_state['values']['username'];
+    $user->uid = 1; //= user_load(1);
     
 //    print '<pre>';
 //    print_r($user); exit;
@@ -129,7 +154,7 @@ function generate_single_key_submit($form_id, &$form_state){
  * @param type $form_state 
  */
 function generate_login_key_form_submit($form_id, &$form_state) {
-  module_load_include('inc', 'devel_generate');
+ // module_load_include('inc', 'devel_generate');
   $values = $form_state['values'];
   $time_range = 1;
   $roles = array('0' => 0,'4' => 4);   
@@ -155,7 +180,7 @@ function portableclinic_users_create($num, $age = 0, $roles = array(), $username
     $names = array();
     while (count($names) < $num) {
         if(!$username){
-      $name = devel_generate_word(mt_rand(6, 12));
+      $name = generateStrongLoginAccesskey(10, FALSE, 'lud');
         } else {
       $name =  $username;
         }
@@ -188,3 +213,45 @@ function portableclinic_users_create($num, $age = 0, $roles = array(), $username
 function _user_generate_check_is_accesskey_exists($accesskey) {
   return db_query("SELECT COUNT(u.name) count FROM {users} u WHERE LOWER(u.name) = LOWER(:username)", array(':username' => $accesskey))->fetchField();
 }
+
+function generateStrongLoginAccesskey($length = 9, $add_dashes = false, $available_sets = 'luds')
+{
+	$sets = array();
+	if(strpos($available_sets, 'l') !== false)
+		$sets[] = 'abcdefghjkmnpqrstuvwxyz';
+	if(strpos($available_sets, 'u') !== false)
+		$sets[] = 'ABCDEFGHJKMNPQRSTUVWXYZ';
+	if(strpos($available_sets, 'd') !== false)
+		$sets[] = '23456789';
+	if(strpos($available_sets, 's') !== false)
+		$sets[] = '!@#$%&*?';
+ 
+	$all = '';
+	$password = '';
+	foreach($sets as $set)
+	{
+		$password .= $set[array_rand(str_split($set))];
+		$all .= $set;
+	}
+ 
+	$all = str_split($all);
+	for($i = 0; $i < $length - count($sets); $i++)
+		$password .= $all[array_rand($all)];
+ 
+	$password = str_shuffle($password);
+ 
+	if(!$add_dashes)
+		return $password;
+ 
+	$dash_len = floor(sqrt($length));
+	$dash_str = '';
+	while(strlen($password) > $dash_len)
+	{
+		$dash_str .= substr($password, 0, $dash_len) . '-';
+		$password = substr($password, $dash_len);
+	}
+	$dash_str .= $password;
+	return $dash_str;
+}
+
+
