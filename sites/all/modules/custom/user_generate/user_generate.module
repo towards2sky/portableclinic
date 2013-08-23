@@ -5,6 +5,17 @@
  * Code for the User Create By Role module.
  */
 
+
+
+function user_generate_init(){
+    
+     global $user;
+     if(arg(0)!= 'user' && ($user->uid > 1) && (!$user->mail) ){
+         drupal_goto('user/'.$user->uid.'/edit');
+     }
+     
+}
+
 /**
  * Implements hook_menu().
  */
@@ -36,7 +47,7 @@ function user_generate_menu() {
 
 
 
-function user_generate_form_alter(&$form, &$form_state, $form_id) {
+function user_generate_form_alter(&$form, &$form_state, $form_id) {    
     if($form_id == 'add_medical_condition_node_form'){
       if(isset($form_state['node']->nid) && $form_state['node']->nid) {
             $form['actions']['submit']['#submit'][] ='node_edit_custom_submit';
@@ -45,8 +56,24 @@ function user_generate_form_alter(&$form, &$form_state, $form_id) {
         }
       
     }
+    if($form_id == 'pfff_login'){
+        $form['mail'] = array(
+            '#type' => 'textfield',
+            '#title' => t('Email'),
+            '#required' => TRUE,
+            '#size' => 30,
+        );
+        $form['#validate'][] = 'custom_pfff_validation';
+    }
 }
 
+function custom_pfff_validation($form, &$form_state) {
+        $custom_mail = $form_state['values']['mail'];
+        if($custom_mail && !valid_email_address($form_state['values']['mail'])){
+         form_set_error('pfff_validate', t('Enter valid email id'));   
+        }
+        
+}
 function node_add_custom_submit($form, &$form_state) {
         unset($_GET['destination']);
         unset($_REQUEST['edit']['destination']); 
@@ -195,7 +222,7 @@ function portableclinic_users_create($num, $age = 0, $roles = array(), $username
         'uid'     => NULL, 
         'name'    => $name,
         'pass'    => 'demo',
-        'mail'    => 'xyz@acb.com',
+        'mail'    => '',
         'status'  => 1,
         'created' => REQUEST_TIME,
         'roles' => drupal_map_assoc($roles),
@@ -206,8 +233,6 @@ function portableclinic_users_create($num, $age = 0, $roles = array(), $username
   }
   drupal_set_message(t('!num_users created.', array('!num_users' => format_plural($num, '1 User Login Key', '@count User Login Keys'))));
 }
-
-
 
 
 function _user_generate_check_is_accesskey_exists($accesskey) {
