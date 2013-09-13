@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Upload PDF For BMI feature.
+ */
+
+include_once 'upload_pdf_for_bmi.features.inc';

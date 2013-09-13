@@ -1,0 +1,78 @@
+<?php
+
+function bmipdf_form_alter(&$form, &$form_state, $form_id) {
+    global $user; 
+    switch ($form_id) {
+        case 'upload_pdf_for_bmi_node_form':
+            $form['actions']['submit']['#submit'][] = '_bmipdf_save_bmi_pdf_file';
+            $form['actions']['submit']['#submit'][] = 'custom_redirect_upload_pdf_for_bmi_node_form';
+            break;
+    }
+}
+
+function wwwwaccess_key_login_validation($form, &$form_state) {
+    
+        $usrname = $form_state['values']['name'];
+        $userObj = user_load_by_name($usrname);
+        if(!$userObj){
+         form_set_error('name', t('Invalid access key.')); 
+        }  
+}
+
+function _bmipdf_save_bmi_pdf_file($form, &$form_state) {
+    
+    
+    $bmi = $form_state['values']['title'];
+    //$medical_condition = $form_state['values']['field_medical_condition_term']['und'][0]['name'];
+    
+    $files_group = $form_state['values']['field_pdf_package']['und'];
+   
+    $files_object = array();
+    foreach($files_group as $single_group) {
+        $fobject = array();
+       if(is_array($single_group['field_pdf']) && ($single_group['field_pdf']['und'][0]['fid'] > 0)){
+        $fobject['bmi'] = $bmi;
+        $fobject['medical_condition'] = $single_group['field_pdf_medical_condition']['und'][0]['name'];
+        $fobject['fid'] = $single_group['field_pdf']['und'][0]['fid'];
+        $files_object[] = $fobject;
+       }
+    }
+   // exit;
+  // p($files_object); exit;
+    if(count($files_object)) {
+        foreach ($files_object as $file) {
+            _bmipdf_save_bmi_pdf($file);
+        }
+    }
+    
+}
+
+/**
+ * Save pdf according to BMI and medical condition
+ */
+function _bmipdf_save_bmi_pdf($obj) {
+    $fid = $obj['fid'];
+    $bmi = $obj['bmi'];
+    $medical_condition = _bmipdf_get_medical_condition_dir($obj['medical_condition']);
+    $fileObj = file_load($fid);
+    $destination = "public://bmi/byadmin/$bmi/$medical_condition";
+    if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
+        exit('Invalid file path');
+    }
+    $copied = file_copy($fileObj, $destination . '/second_part.pdf', FILE_EXISTS_REPLACE);
+    
+    if($copied){ return $destination . '/second_part.pdf'; } else { return FALSE; }
+}
+
+
+function _bmipdf_get_medical_condition_dir($medical_condition) {
+    
+     $dir = str_replace(' ', '_',strtolower(trim($medical_condition)));
+     return $dir;
+}
+
+function custom_redirect_upload_pdf_for_bmi_node_form($form, &$form_state) {
+    unset($_GET['destination']);
+    unset($_REQUEST['edit']['destination']);
+    $form_state['redirect'] = 'node/add/upload-pdf-for-bmi';
+}
