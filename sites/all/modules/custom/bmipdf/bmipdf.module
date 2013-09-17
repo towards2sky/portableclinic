@@ -4,19 +4,22 @@ function bmipdf_form_alter(&$form, &$form_state, $form_id) {
     global $user; 
     switch ($form_id) {
         case 'upload_pdf_for_bmi_node_form':
+       	    $form['actions']['submit']['#submit'][] = '_bmipdf_save_bmi_pdf_file';
             $form['actions']['submit']['#submit'][] = '_bmipdf_save_bmi_pdf_file';
             $form['actions']['submit']['#submit'][] = 'custom_redirect_upload_pdf_for_bmi_node_form';
             break;
     }
 }
 
-function wwwwaccess_key_login_validation($form, &$form_state) {
-    
-        $usrname = $form_state['values']['name'];
-        $userObj = user_load_by_name($usrname);
-        if(!$userObj){
-         form_set_error('name', t('Invalid access key.')); 
-        }  
+function _bmipdf_bmivalue_validation($form, &$form_state) {
+        $bmi_value = trim($form_state['values']['title']);
+        if (is_numeric($bmi_value) ){ 
+          if ($bmi_value < 10 || $bmi_value > 60){ 
+            form_set_error('title', t('BMI value should be 11 to 60.')); 
+          }
+        } else { 
+            form_set_error('title', t('Invalid BMI value.')); 
+        } 
 }
 
 function _bmipdf_save_bmi_pdf_file($form, &$form_state) {

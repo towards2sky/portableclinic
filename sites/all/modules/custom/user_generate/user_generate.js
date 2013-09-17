@@ -19,7 +19,7 @@ function check_values(){
 
 function calculate_bmi(){
     var weight = parseInt($("#edit-field-weight-kg-und" ).val());
-    var height = $("#edit-field-height-m-und" ).val().split('.');
+    var height = $("#edit-field-height-m-und" ).val().split('_');
     var height_inch = (((parseInt(height[0])*12)+parseInt(height[1])));
     var height_m = ( (height_inch) * (0.0254) );
     var bmi = (weight/(height_m*height_m));

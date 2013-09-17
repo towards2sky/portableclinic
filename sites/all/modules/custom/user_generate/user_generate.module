@@ -11,10 +11,6 @@ function p($obj) {
  */
 function user_generate_init() {
     drupal_add_js(drupal_get_path('module', 'user_generate') . '/user_generate.js', 'file');
-
-
-
-    // drupal_goto();
 }
 
 function login_by_accesskey_form_submit($form, &$form_state) {
@@ -42,6 +38,14 @@ function user_generate_menu() {
         'type' => MENU_NORMAL_ITEM,
     );
 
+   $items['generate_admin_user'] = array(
+        'title' => t('Generate Admin User'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('generate_admin_user'),
+        'access arguments' => array('administer Key Generator'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    
     $items['login'] = array(
         'page callback' => 'drupal_get_form',
         'page arguments' => array('login_by_accesskey_form'),
@@ -67,23 +71,18 @@ function user_generate_menu() {
     return $items;
 }
 
-
 /**
  * Implements hook_permission().
  */
 function user_generate_permission() {
-  return array(
-    'administer Key Generator' => array(
-      'title' => t('Admin Key Generator'),
-      'description' => t('Allow users to generate access keys.'),
-    ),
-  );
+    return array(
+        'administer Key Generator' => array(
+            'title' => t('Admin Key Generator'),
+            'description' => t('Allow users to generate access keys.'),
+        ),
+    );
 }
 
-/**
- * Implements hook_menu_alter().
- */
- 
 function user_generate_menu_alter(&$items) {
 
     $items['user']['title'] = 'Enter Access key';
@@ -101,14 +100,16 @@ function custom_user_menu_title() {
     return user_is_logged_in() ? t('My account') : t('Enter Access key');
 }
 
+
+
 function user_generate_form_alter(&$form, &$form_state, $form_id) {
-    global $user;
- //  echo $form_id;
+    global $user; 
+
     switch ($form_id) {
         case 'user_profile_form':
-            if(!user_access('administer')) {
-            unset($form['account']['pass']);
-            unset($form['account']['current_pass']);
+            if (!user_access('administer')) {
+                unset($form['account']['pass']);
+                unset($form['account']['current_pass']);
             }
             break;
         case 'add_medical_condition_node_form':
@@ -118,7 +119,7 @@ function user_generate_form_alter(&$form, &$form_state, $form_id) {
             } else {
                 $form['actions']['submit']['#submit'][] = 'node_add_custom_submit';
             }
-            
+
             $form['actions']['submit']['#submit'][] = 'after_medical_condition_save';
             break;
         case 'pfff_login':
@@ -131,15 +132,51 @@ function user_generate_form_alter(&$form, &$form_state, $form_id) {
             $form['#validate'][] = 'custom_pfff_validation';
             break;
         case 'patient_assessment_form_node_form':
+            
+//            if($form['field_weight_kg']['und']['#options']){
+//                $listnum = range(25,150,0.5);
+//                    $weight = array();
+//                    $weight['_none'] = '- Select a value -';
+//                foreach($listnum as $v ){
+//                    $weight[(string)$v] = $v. ' kg'; 
+//                }
+//                
+//                $form['field_weight_kg']['und']['#options'] = $weight;
+//            
+//            }
+//            if($form['field_height_m']['und']['#options']){
+//                $height = array();
+//                     $height['_none'] = '- Select a value -';
+//                    for ($f=3; $f < 11; $f++ ) {
+//                    $height[(string)($f)] = $f.' ft ';
+//                        for( $i=1; $i<12; $i++) {
+//                        $height[(string)($f.'.'.$i)] = $f.' ft '.$i.' inch';
+//                        }
+//                    }    
+//                $form['field_height_m']['und']['#options'] =  $height;
+//            }
+            if(isset($form['field_medical_condition']['und'][0]['select_other_list']['#description'])) {
+                unset($form['field_medical_condition']['und'][0]['select_other_list']['#description']);
+            }
+            if(isset($form['field_gender']['und']['#options']['_none'])){
+                $form['field_gender']['und']['#options']['_none'] = 'select';
+            }
             $account = user_load($user->uid);
             if (isset($account->field_servay_limit['und'])) {
                 $remain_submittion = $account->field_servay_limit['und'][0]['value'];
             } else {
                 $remain_submittion = 0;
             }
-            $text = strip_tags($form['field_submit_limit']['und'][0]['markup']['#markup']) . ' - ' . $remain_submittion;
-            $form['field_submit_limit']['und'][0]['markup']['#markup'] = $text;
             
+            $msg = '';
+            if(!$remain_submittion) {
+                $msg = '<div class="messages error">Please recharge your account to activate the assessment form.</div>';
+            }
+            
+            $text = strip_tags($form['field_submit_limit']['und'][0]['markup']['#markup']) . ' - ' . $remain_submittion;
+            $form['field_submit_limit']['und'][0]['markup']['#markup'] = $msg.$text;
+
+
             if ($user->uid > 1 && $remain_submittion < 1) {
                 $all_group_fieldset = array_keys($form['#groups']);
                 foreach ($all_group_fieldset as $group_key) {
@@ -151,7 +188,7 @@ function user_generate_form_alter(&$form, &$form_state, $form_id) {
                 $form['actions']['submit']['#submit'][] = 'node_add_patient_assessment_custom_submit';
                 $form['actions']['submit']['#value'] = 'Submit';
             }
-                $form['#validate'][] = 'custom_assessment_validation';
+            $form['#validate'][] = 'custom_assessment_validation';
             break;
 
         case 'user_login':
@@ -163,10 +200,11 @@ function user_generate_form_alter(&$form, &$form_state, $form_id) {
                 $form['pass']['#type'] = 'hidden';
                 $form['pass']['#attributes'] = array('value' => 'demo');
             }
+             $form['#validate'][2] = 'access_key_login_validation';
             break;
         case 'upload_bmi_pdf_node_form':
-            
-            if(isset($form['field_pdf_medical_condition']['und'][0]['select_other_list']['#options']['other'])){
+
+            if (isset($form['field_pdf_medical_condition']['und'][0]['select_other_list']['#options']['other'])) {
                 unset($form['field_pdf_medical_condition']['und'][0]['select_other_list']['#options']['other']);
             }
             $form['actions']['submit']['#submit'][] = 'save_bmi_pdf_file';
@@ -175,16 +213,32 @@ function user_generate_form_alter(&$form, &$form_state, $form_id) {
     }
 }
 
+function access_key_login_validation($form, &$form_state) {
+    
+        $usrname = $form_state['values']['name'];
+        $userObj = user_load_by_name($usrname);
+       // p($userObj);exit;
+        if(!$userObj){
+         form_set_error('name', t('Please enter valid access key.'));
+            
+        } 
+//        else if((is_array($userObj->roles)) && in_array('Site Admin', $userObj->roles)){
+//            
+//            form_set_error('name', t('Invalid access key.....'));
+//        }
+       
+}
+
 function save_bmi_pdf_file($form, &$form_state) {
     $bmi = $form_state['values']['title'];
     $medical_condition = str_replace(' ', '_', trim($form_state['values']['field_pdf_medical_condition']['und'][0]['value']));
     $fid = $form_state['values']['field_bmi_upload_pdf']['und'][0]['fid'];
-    $fileObj = file_load($fid) ;
-     $destination =  "public://bmi/byadmin/$bmi/$medical_condition";
-    if(!file_prepare_directory($destination, FILE_CREATE_DIRECTORY)){
-            exit('Invalid file path');
-        } 
-    file_copy($fileObj, $destination.'/second_part.pdf',FILE_EXISTS_REPLACE);
+    $fileObj = file_load($fid);
+    $destination = "public://bmi/byadmin/$bmi/$medical_condition";
+    if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
+        exit('Invalid file path');
+    }
+    file_copy($fileObj, $destination . '/second_part.pdf', FILE_EXISTS_REPLACE);
 }
 
 function custom_redirect_upload_bmi_pdf_form($form, &$form_state) {
@@ -192,6 +246,7 @@ function custom_redirect_upload_bmi_pdf_form($form, &$form_state) {
     unset($_REQUEST['edit']['destination']);
     $form_state['redirect'] = 'node/add/upload-bmi-pdf';
 }
+
 function custom_pfff_validation($form, &$form_state) {
     $custom_mail = $form_state['values']['mail'];
     $validmail = 1;
@@ -204,26 +259,26 @@ function custom_pfff_validation($form, &$form_state) {
     }
 }
 
-
 function custom_assessment_validation($form, &$form_state) {
- 
+    
     $mobile = $form_state['values']['field_mobile']['und'][0]['number'];
-    if(!(strlen($mobile) == 10)){ form_set_error('number', t('Mobile is not valid.')); }    
+    if (!(strlen($mobile) == 10)) {
+        form_set_error('number', t('Mobile is not valid.'));
+    }
 }
 
 function after_medical_condition_save($form, &$form_state) {
-        $type = "add_medical_condition";
-        $nodes = node_load_multiple(array(), array('type' => $type));
-        $medical_condition_option = '';//array();
-        foreach ($nodes as $node) {
+    $type = "add_medical_condition";
+    $nodes = node_load_multiple(array(), array('type' => $type));
+    $medical_condition_option = ''; //array();
+    foreach ($nodes as $node) {
         $medical_condition_option [$node->title] = trim($node->title);
-        }
-        
-        
-        p($medical_condition_option); exit;
+    }
+
+
+    p($medical_condition_option);
+    exit;
 }
-
-
 
 function node_add_custom_submit($form, &$form_state) {
     unset($_GET['destination']);
@@ -254,31 +309,37 @@ function node_add_patient_assessment_custom_submit($form, &$form_state) {
 }
 
 function send_patient_assessment_mail($form, &$form_state) {
-
+    global $user;
     module_load_include('inc', 'user_generate', 'user_generate_pdf');
-    $persionalObj = array();
-    $persionalObj['name'] = $form_state['values']['title'];
-    $persionalObj['gender'] = $form_state['values']['field_gender']['und'][0]['value'];
+    
+    $birthDate = date("m/d/Y", strtotime(trim($form_state['values']['field_dob']['und'][0]['value'])));
+     
+    $obj = array();
+    $obj['name'] = get_field_value($form_state['values']['title']);
+    $obj['gender'] = get_field_value($form_state['values']['field_gender']['und'][0]['value']);
+    $obj['dob'] = get_dob($birthDate, '/');
+    $obj['profession'] = get_field_value($form_state['values']['field_profession']['und'][0]['value']);
+    $obj['mobile'] = get_field_value($form_state['values']['field_mobile']['und'][0]['number']);
+    $obj['patient_email'] = get_field_value($form_state['values']['field_patient_email']['und'][0]['email']);
+    $obj['pulse_rate'] = get_field_value($form_state['values']['field_pulse_rate']['und'][0]['value']);
+    $obj['bp_higher'] = get_field_value($form_state['values']['field_blood_pressure_systolic']['und'][0]['value']);
+    $obj['bp_lower'] = get_field_value($form_state['values']['field_blood_pressure_diastolic']['und'][0]['value']);
+    $obj['bmi'] = get_field_value($form_state['values']['field_bmi']['und'][0]['value']);
+    $obj['medical_condition'] = get_field_value($form_state['values']['field_medical_condition']['und'][0]['name']);
+    $obj['daily_Raw_food'] = get_field_value_row($form_state['values']['field_raw_food']['und'][0]['value']);
+    $obj['daily_fruit_juices'] = get_field_value($form_state['values']['field_fruit_juices']['und'][0]['value']);   
+    $obj['lunch_raw_food'] = get_field_value_row($form_state['values']['field_vegetarian_mention_the_amo']['und'][0]['value']);
+    $obj['dinner_raw_food'] = get_field_value_row($form_state['values']['field_vegetarian_mention']['und'][0]['value']);
+    $obj['snacks_raw_food'] = get_field_value_row($form_state['values']['field_raw_food_dinner']['und'][0]['value']);
+    $obj['snacks_fruit_juices'] = get_field_value($form_state['values']['field_fruit_juices_dinner']['und'][0]['value']);
+    $obj['physical_work'] = get_field_value($form_state['values']['field_mention_the_level_of_physi']['und'][0]['value']);
+    $obj['physical_sleep'] = get_field_value($form_state['values']['field_sleep_pattern']['und'][0]['value']);
+    $obj['medication'] = get_field_value($form_state['values']['field_are_you_currently_taking_a']['und'][0]['value']);
+    $obj['medication_taken'] = get_field_value($form_state['values']['field_are_you_currently_taking_a']['und'][0]['value']);
+    $obj['family_medication_condition'] = get_field_value($form_state['values']['field_family_history_is_any_one_']['und'][0]['value']);
+    $my_file = prepair_final_bmi_pdf($obj);
 
-    $persionalObj['profession'] = $form_state['values']['field_profession']['und'][0]['value'];
-    $persionalObj['mobile'] = $form_state['values']['field_mobile']['und'][0]['number'];
-    $persionalObj['patient_email'] = $form_state['values']['field_patient_email']['und'][0]['email'];
-    // $presionalObj['height_m'] = $form_state['values']['field_height_m']['und'][0]['value'];
-    $persionalObj['pulse_rate'] = $form_state['values']['field_pulse_rate']['und'][0]['value'];
-    $persionalObj['blood_pressure_systolic'] = $form_state['values']['field_blood_pressure_systolic']['und'][0]['value'];
-    $persionalObj['blood_pressure_diastolic'] = $form_state['values']['field_blood_pressure_diastolic']['und'][0]['value'];
-    // $presionalObj['weight_kg'] = $form_state['values']['weight_kg']['und'][0]['value'];
-    $persionalObj['dob'] = date("d-m-Y", strtotime(trim($form_state['values']['field_dob']['und'][0]['value'])));
-
-    $persionalObj['bmi'] = $form_state['values']['field_bmi']['und'][0]['value'];
-    $persionalObj['medical_condition'] = $form_state['values']['field_medical_condition']['und'][0]['value'];
-
-
-    $bmi_value = $form_state['values']['field_bmi']['und'][0]['value'];
-
-    $my_file = prepair_final_bmi_pdf($persionalObj);
-
-
+    
     $medical_condition = $form_state['values']['field_medical_condition']['und'][0]['value'];
 
     if (isset($form_state['values']['field_patient_email']['und'][0]['email']) && count($form_state['values']['field_patient_email']['und'][0]['email'])) {
@@ -286,13 +347,12 @@ function send_patient_assessment_mail($form, &$form_state) {
         $reciver_mail = $form_state['values']['field_patient_email']['und'][0]['email'];
         global $base_url;
         $mailcount = 0;
-
-        $filename = 'demo-bmi.pdf'; //trim($form_state['values']['filename']);
-        $reciver_email = trim($form_state['values']['field_patient_email']['und'][0]['email']); //reciver mail address
-        $mailfrom = 'info@rajeshsaini.com'; //trim($form_state['values']['from']);
-
+        $reciver_email = array();
+        $reciver_mail['a'] = 'mw@asiabookofrecords.com';
+        $reciver_email['d']=$user->mail;
+        $reciver_email['p'] = trim($form_state['values']['field_patient_email']['und'][0]['email']); //reciver mail address
+        $mailfrom = 'noreply@portableclinic.in'; //trim($form_state['values']['from']);
         $reciver_name = $form_state['values']['title'];
-
         $subject = 'Patient Assessment - Asia book of Records- Medical Wing'; //$form_state['values']['subject'];
         global $base_path;
         $my_file = pick_bmi_pdf();
@@ -301,15 +361,29 @@ function send_patient_assessment_mail($form, &$form_state) {
         $my_mail = $mailfrom;
         $my_replyto = $mailfrom;
         $my_subject = $subject;
-        if ($my_file) {
-            $my_message = t("Dear $reciver_name,\n 
-your Patient Assessment Form of Asia book of Records- Medical Wing has been submitted. \n\n
-Please find the attachment to view your Report");
-        } else {
-            $my_message = t("Dear $reciver_name,\n  We will send you mail next 48 hours");
-        }
 
-        mail_attachment($my_file, $my_path, $reciver_email, $my_mail, $my_name, $my_replyto, $my_subject, $my_message);
+
+       // mail_attachment($my_file, $my_path, $reciver_email, $my_mail, $my_name, $my_replyto, $my_subject, $my_message);
+        
+        unset($_SESSION['messages']);
+        drupal_set_message("Patient Assessment Form for $reciver_name has been created.");          
+        
+       if(count($reciver_email)){ 
+        $params['reciver_name']=$reciver_name;
+        $from_mail = 'noreply@portableclinic.in';
+            foreach ($reciver_email as $k=>$email) {
+            $params['account'] = $account;
+               $message = drupal_mail('user_generate', 'patient-assessment-mail', $email, user_preferred_language($user), $params, $from_mail);
+           if($message['send']){
+                     if($k != 'a'){  drupal_set_message('Your assessment has been sent to '. $email);}
+                }else {
+                    drupal_set_message("Your assessment has't sent due to mail serevr ... ERROR!", 'error');
+                }
+        }
+    } else {
+    drupal_set_message("Your assessment has't sent ... ERROR!", 'error'); // or use booleans here    
+    }
+    
     }
 }
 
@@ -327,6 +401,31 @@ function login_by_accesskey_form() {
         '#value' => t('Login'),
     );
     return $form;
+}
+
+
+function generate_admin_user() {
+
+    $form['accesskey'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Enter desirable key name for generate as admin user.'),
+        '#size' => 50,
+        '#required' => TRUE,
+    );
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Generate'),
+    );
+
+    $form['#validate'][0] = 'accesskey_validation';
+    return $form;
+}
+
+function generate_admin_user_submit($form, &$form_state){
+    $username = $form_state['values']['accesskey'];
+    $time_range = 1;
+    $roles = array('2' => 2, '5' => 5);
+    portableclinic_users_create(1, $time_range, $roles, $username);
 }
 
 function generate_login_key_form() {
@@ -385,7 +484,9 @@ function accesskey_validation(&$form, &$form_state) {
 
 function generate_single_key_submit($form_id, &$form_state) {
     $username = $form_state['values']['accesskey'];
-    portableclinic_users_create($values['num'], $time_range, $roles, $username);
+    $time_range = 1;
+    $roles = array('0' => 0, '4' => 4);
+    portableclinic_users_create(1, $time_range, $roles, $username);
 }
 
 /**
@@ -493,6 +594,7 @@ function generateStrongLoginAccesskey($length = 9, $add_dashes = false, $availab
 
 function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $replyto, $subject, $message) {
     global $user;
+    /*
     $file = pick_bmi_pdf();
     $new_file_name = 'The China Study Diiet plan.pdf';
     $attahment_header = NULL;
@@ -507,9 +609,6 @@ function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $rep
         $attahment_header .= "Content-Transfer-Encoding: base64\r\n";
         $attahment_header .= "Content-Disposition: attachment; filename=\"" . $name . "\"\r\n\r\n";
         $attahment_header .= $content . "\r\n\r\n";
-
-        // echo $attahment_header;
-        //  exit;
     }
     //  exit;
     $uid = md5(uniqid(time()));
@@ -522,25 +621,119 @@ function mail_attachment($filename, $path, $mailto, $from_mail, $from_name, $rep
     $header .= "--" . $uid . "\r\n";
     $header .= "Content-Type: text/html; charset=UTF-8; format=flowed.\r\n";
     $header .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-    $header .= $message . "\r\n\r\n";
+  //  $header .= $message . "\r\n\r\n";
     $header .= "--" . $uid . "\r\n";
     $header .= $attahment_header;
 
     $header .= "--" . $uid . "--";
-    if (mail($mailto, $subject, "", $header)) {
-        drupal_set_message("Your assessment has been sent to user."); // or use booleans here
+    
+    if(count($mailto)){
+        $sentmail = 0;
+        foreach($mailto as $emailAddress){
+           if(mail($emailAddress, $subject, $message, $header)){
+               $sentmail = 1;
+           } 
+        }
+        if($sentmail){
+            $successMessage = "Your assessment has been sent to ".$mailto['d']." and ".$mailto['p']."";
+            drupal_set_message($successMessage); 
+        }else {
+        drupal_set_message("Your assessment has has't sent. Due to mail server ... ERROR!", 'error'); // or use booleans here  
+        }
+        
     } else {
-        drupal_set_message("Prescription mail has't sent ... ERROR!", 'error'); // or use booleans here  
+        drupal_set_message("Your assessment has has't sent ... ERROR!", 'error'); // or use booleans here  
     }
+  */
+  /*  
+    if(count($mailto)){ 
+        $params['reciver_name']='';
+        foreach ($mailto as $k=>$email) {
+            $params['account'] = $account;
+            drupal_mail('user_generate', 'patient-assessment-mail', $email, user_preferred_language($user), $params, $from_mail);
+            if($k != 'a'){
+                drupal_set_message('Your assessment has been sent to '. $email);
+            }
+        }
+    } else {
+      drupal_set_message("Your assessment has't sent ... ERROR!", 'error'); // or use booleans here    
+    }
+  */
 }
+
+
+/*
+ * Hook_mail
+ */
+function user_generate_mail($key, &$message, $params) {
+  switch($key) {
+    case 'patient-assessment-mail':
+        $reciver_name = $params['reciver_name'];
+        $file = pick_bmi_pdf();
+        if($file){
+            $new_file_name = 'The China Study Diet Plan.pdf';
+            $file_content = file_get_contents($file);
+            $attachments = array(
+                'filecontent' => $file_content,
+                'filename' => $new_file_name,
+                'filemime' => 'application/pdf',
+            );
+          $message['params']['attachments'][] = $attachments;
+        }
+        
+        if ($file) {
+            $my_message = t("Dear $reciver_name,\n\n
+Your Patient Assessment Form of Asia book of Records- Medical Wing has been submitted. \n\n
+Please find the attachment to view your Report");
+        } else {
+            $my_message = t("Dear $reciver_name,\n  You will receive a prescription within 48 working hours.");
+        }
+
+      $langcode = $message['language']->language;
+      $message['subject'] = t('Patient Assessment - Asia book of Records- Medical Wing');
+      $message['body'][] = $my_message;
+      break;
+  }
+}
+
+
 
 function pick_bmi_pdf() {
     global $user;
     $dir_path = "public://bmi/bydoctor/$user->uid/";
     $path = drupal_realpath($dir_path);
-    if (file_exists("$path/final.pdf")) { 
-        return "$path/final.pdf"; 
+    if (file_exists("$path/final.pdf")) {
+        return "$path/final.pdf";
     } else {
-    return NULL;
+        return NULL;
     }
+}
+
+function bmistatus($bmi) {
+    $info = '';
+    if ($bmi < 15) {
+        $info = "very severely underweight";
+    }
+    if (($bmi >= 15) && ($bmi < 16)) {
+        $info = "severely underweight";
+    }
+    if (($bmi >= 16) && ($bmi < 18.5)) {
+        $info = "underweight";
+    }
+    if (($bmi >= 18.5) && ($bmi < 25)) {
+        $info = "normal";
+    }
+    if (($bmi >= 25) && ($bmi < 30)) {
+        $info = "overweight";
+    }
+    if (($bmi >= 30) && ($bmi < 35)) {
+        $info = "moderately obese";
+    }
+    if (($bmi >= 35) && ($bmi <= 40)) {
+        $info = "severely obese";
+    }
+    if ($bmi > 40) {
+        $info = "very severely obese";
+    }
+    return $info;
 }
