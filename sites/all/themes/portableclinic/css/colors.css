@@ -8,8 +8,6 @@ body.overlay {
 .comment .comment-arrow {
   border-color: #ffffff;
 }
-#page,
-#main-wrapper,
 #main-menu-links li a.active,
 #main-menu-links li.active-trail a {
   background: #ffffff;
@@ -21,14 +19,19 @@ body.overlay {
   background-color: #ffffff;
   border-bottom: 1px solid #ffffff;
 }
+/*#header{
+	background:url(../images/head.png) repeat-x;
+	}*/
 #header {
-  background-color: #48a9e4;
-  background-image: -moz-linear-gradient(top, #0779bf 0%, #48a9e4 100%);
-  background-image: -ms-linear-gradient(top, #0779bf 0%, #48a9e4 100%);
-  background-image: -o-linear-gradient(top, #0779bf 0%, #48a9e4 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0779bf), color-stop(1, #48a9e4));
-  background-image: -webkit-linear-gradient(top, #0779bf 0%, #48a9e4 100%);
-  background-image: linear-gradient(top, #0779bf 0%, #48a9e4 100%);
+  background-color: #e9e9e9;
+  background-image: -moz-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+  background-image: -ms-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+  background-image: -o-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #e0e0e0));
+  background-image: -webkit-linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+  background-image: linear-gradient(top, #ffffff 0%, #e0e0e0 100%);
+  border-top: 1px solid rgb(230, 230, 230);
+border-bottom: 1px solid rgb(190, 190, 190);
 }
 a {
   color: #0071B3;
@@ -44,9 +47,9 @@ a:active {
   background-color: #f6f6f2;
   border-color: #f9f9f9;
 }
-#page-wrapper,
 #footer-wrapper {
-  background: #292929;
+	  background-color:#e9e9e9;
+
 }
 .region-header,
 .region-header a,

@@ -4,7 +4,6 @@
 html,
 body,
 #page  {
-  height: 100%;
 }
 #page-wrapper {
   min-height: 100%;
@@ -84,9 +83,7 @@ body,
   margin: 20px 20px 30px;
   width: 280px;
 }
-#footer-wrapper {
-  padding: 35px 5px 30px;
-}
+
 .region-footer-firstcolumn,
 .region-footer-secondcolumn,
 .region-footer-thirdcolumn,

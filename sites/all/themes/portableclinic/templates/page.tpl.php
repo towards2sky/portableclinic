@@ -148,11 +148,13 @@
 
   </div></div> <!-- /.section, /#header -->
 
+
   <?php if ($messages): ?>
     <div id="messages"><div class="section clearfix">
       <?php print $messages; ?>
     </div></div> <!-- /.section, /#messages -->
   <?php endif; ?>
+
 
   <?php if ($page['featured']): ?>
     <div id="featured"><div class="section clearfix">
@@ -204,17 +206,7 @@
       </div></div> <!-- /.section, /#sidebar-second -->
     <?php endif; ?>
 
-  </div></div> <!-- /#main, /#main-wrapper -->
-
-  <?php if ($page['triptych_first'] || $page['triptych_middle'] || $page['triptych_last']): ?>
-    <div id="triptych-wrapper"><div id="triptych" class="clearfix">
-      <?php print render($page['triptych_first']); ?>
-      <?php print render($page['triptych_middle']); ?>
-      <?php print render($page['triptych_last']); ?>
-    </div></div> <!-- /#triptych, /#triptych-wrapper -->
-  <?php endif; ?>
-
-  <div id="footer-wrapper"><div class="section">
+<div id="footer-wrapper"><div class="section">
 
     <?php if ($page['footer_firstcolumn'] || $page['footer_secondcolumn'] || $page['footer_thirdcolumn'] || $page['footer_fourthcolumn']): ?>
       <div id="footer-columns" class="clearfix">
@@ -233,4 +225,17 @@
 
   </div></div> <!-- /.section, /#footer-wrapper -->
 
+
+  </div><!-- /#main -->
+  </div> <!-- /#main, /#main-wrapper -->
+
+  <?php if ($page['triptych_first'] || $page['triptych_middle'] || $page['triptych_last']): ?>
+    <div id="triptych-wrapper"><div id="triptych" class="clearfix">
+      <?php print render($page['triptych_first']); ?>
+      <?php print render($page['triptych_middle']); ?>
+      <?php print render($page['triptych_last']); ?>
+    </div></div> <!-- /#triptych, /#triptych-wrapper -->
+  <?php endif; ?>
+
+  
 </div></div> <!-- /#page, /#page-wrapper -->

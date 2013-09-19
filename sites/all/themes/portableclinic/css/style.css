@@ -9,6 +9,14 @@ body {
   padding: 0;
   border: 0;
   outline: 0;
+  background:url(../images/bg.jpg) repeat;
+}
+@font-face{ 
+	font-family: Philosopher;
+	src: url(../fonts/Philosopher-Bold.ttf);
+	src: url(../fonts/Philosopher-BoldItalic.ttf);
+	src: url(../fonts/Philosopher-Italic.ttf);
+	src: url(../fonts/Philosopher-Regular.ttf);
 }
 a:link,
 a:visited {
@@ -27,10 +35,13 @@ h5,
 h6 {
   margin: 1.0em 0 0.5em;
   font-weight: inherit;
+  color:#0ea3db;
+  font-family:Philosopher;
 }
 h1 {
   font-size: 1.357em;
-  color: #000;
+  padding:5px 0;
+  margin:0px;
 }
 h2 {
   font-size: 1.143em;
@@ -43,6 +54,9 @@ del {
 }
 tr.odd {
   background-color: #dddddd;
+}
+td.active {
+background-color: rgb(196, 219, 233);
 }
 img {
   outline: 0;
@@ -106,7 +120,7 @@ body,
 #site-slogan,
 .ui-widget,
 .comment-form label {
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family:Verdana, Geneva, sans-serif;
 }
 #header,
 #footer-wrapper,
@@ -182,8 +196,7 @@ table table {
   font-size: 1em;
 }
 table tr th {
-  background: #757575;
-  background: rgba(0, 0, 0, 0.51);
+  background: #337da8;
   border-bottom-style: none;
 }
 table tr th,
@@ -207,13 +220,11 @@ tr th {
   border-color: rgba(255, 255, 255, 0.18);
 }
 tr.odd {
-  background: #e4e4e4;
-  background: rgba(0, 0, 0, 0.105);
+  background: #cfe2ed;
 }
 tr,
 tr.even {
-  background: #efefef;
-  background: rgba(0, 0, 0, 0.063);
+  background: #e9f0f4;
 }
 table ul.links {
   margin: 0;
@@ -294,13 +305,18 @@ ul.tips {
 }
 #logo {
   float: left; /* LTR */
-  padding: 15px 15px 15px 10px; /* LTR */
+  padding: 15px 15px 0px 10px; /* LTR */
 }
 #name-and-slogan {
   float: left; /* LTR */
   padding-top: 34px;
-  margin: 0 0 30px 15px; /* LTR */
 }
+#name-and-slogan #site-name a{
+	color:#00acf6;
+	font-family:Philosopher;
+	font-size:25px;
+	font-weight:bold;
+	}
 #site-name {
   font-size: 1.821em;
   color: #686868;
@@ -350,11 +366,13 @@ h1#site-name {
 .region-header .form-text:focus,
 .region-header .form-text:active {
   background: #fff;
-  background: rgba(255, 255, 255, 0.8);
 }
+input:focus{
+	background-color:#ebebeb;
+	border:1px solid #aaa !important;
+	}
 .region-header .form-required {
   color: #eee;
-  color: rgba(255, 255, 255, 0.7);
 }
 /* Region header block menus. */
 .region-header .block-menu {
@@ -458,6 +476,7 @@ h1#site-name {
 
 #main-menu {
   clear: both;
+  float:right;
 }
 #main-menu-links {
   font-size: 0.929em;
@@ -518,12 +537,11 @@ h1#site-name {
 #secondary-menu-links a:focus {
   text-decoration: underline;
 }
-
+#secondary-menu #secondary-menu-links li a{color:#00acf6;}
 /* ------------------- Main ------------------- */
 
 #main {
-  margin-top: 20px;
-  margin-bottom: 40px;
+  margin-top: 1px;
 }
 
 /* ----------------- Featured ----------------- */
@@ -567,15 +585,15 @@ h1#site-name {
 /* ----------------- Content ------------------ */
 
 .content {
-  margin-top: 10px;
+  padding-top: 5px;
 }
 h1#page-title {
-  font-size: 2em;
+  font-size: 22px;
   line-height: 1;
 }
 #content h2 {
   margin-bottom: 2px;
-  font-size: 1.429em;
+  font-size: 20px;
   line-height: 1.4;
 }
 .node .content {
@@ -647,6 +665,15 @@ h1#page-title {
   padding: 0 1em 0 0; /* LTR */
   white-space: nowrap;
 }
+.field .field-label{
+	color:#426f94;
+	float:left;
+	width:13%;
+	}
+.field-label-above{
+	line-height:25px;
+	}
+
 .link-wrapper {
   text-align: right;
 }
@@ -835,18 +862,15 @@ ul.links {
 /* ------------------ Footer ------------------ */
 
 #footer-wrapper {
-  color: #c0c0c0;
-  color: rgba(255, 255, 255, 0.65);
+  color: #444;
   font-size: 0.857em;
 }
 #footer-wrapper a {
-  color: #fcfcfc;
-  color: rgba(255, 255, 255, 0.8);
+  color: #00acf6;
 }
 #footer-wrapper a:hover,
 #footer-wrapper a:focus {
-  color: #fefefe;
-  color: rgba(255, 255, 255, 0.95);
+  color: #00acf6;
   text-decoration: underline;
 }
 #footer-wrapper .block {
@@ -953,7 +977,7 @@ ul.links {
 
 .tabs {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin-bottom: 20px;
+  /*margin-bottom: 20px;*/
 }
 .tabs ul.primary {
   padding: 0 3px;
@@ -1117,8 +1141,7 @@ a.button:active {
 /* -------------- Form Elements   ------------- */
 
 fieldset {
-  background: #ffffff;
-  border: 1px solid #cccccc;
+  border: 1px solid #88c0e0;
   margin-top: 10px;
   margin-bottom: 32px;
   padding: 0 0 10px;
@@ -1129,6 +1152,26 @@ fieldset {
   -webkit-border-radius: 4px;
   border-radius: 4px;
 }
+
+/*fieldset{
+  background-color: #e6e6e6;
+  background-image: -moz-linear-gradient(top, #ffffff 50%, #e6e6e6 100%);
+  background-image: -ms-linear-gradient(top, #ffffff 50%, #e6e6e6 100%);
+  background-image: -o-linear-gradient(top, #ffffff 50%, #e6e6e6 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #e6e6e6));
+  background-image: -webkit-linear-gradient(top, #ffffff 50%, #e6e6e6 100%);
+  background-image: linear-gradient(top, #ffffff 50%, #e6e6e6 100%);
+}*/
+fieldset{
+  background-color: #eaf3f8;
+  background-image: -moz-linear-gradient(top, #ffffff 25%, #eaf3f8 100%);
+  background-image: -ms-linear-gradient(top, #ffffff 25%, #eaf3f8 100%);
+  background-image: -o-linear-gradient(top, #ffffff 25%, #eaf3f8 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ffffff), color-stop(1, #eaf3f8));
+  background-image: -webkit-linear-gradient(top, #ffffff 25%, #eaf3f8 100%);
+  background-image: linear-gradient(top, #ffffff 25%, #eaf3f8 100%);
+}
+
 .fieldset-wrapper {
   margin-top: 25px;
 }
@@ -1168,10 +1211,9 @@ fieldset.collapsed {
   border-radius: 0;
 }
 fieldset legend {
-  background: #dbdbdb;
-  border: 1px solid #ccc;
+  background: #018fe2;
+  border: 1px solid #88c0e0;
   border-bottom: none;
-  color: #3b3b3b;
   display: block;
   height: 2em;
   left: -1px; /* LTR */
@@ -1180,7 +1222,6 @@ fieldset legend {
   padding: 0;
   position: absolute;
   text-indent: 10px;
-  text-shadow: 0 1px 0 #fff;
   top: -12px;
   width: 100%;
   -khtml-border-radius-topleft: 4px;
@@ -1198,13 +1239,14 @@ fieldset.collapsed legend {
   -webkit-border-radius: 4px;
   border-radius: 4px;
 }
-fieldset legend a {
-  color: #3b3b3b;
+fieldset legend a, fieldset legend span {
+  color: #fff;
+  font-weight:bold;
 }
 fieldset legend a:hover,
 fieldset legend a:focus,
 fieldset legend a:active {
-  color: #000;
+  color: #fff;
 }
 fieldset .fieldset-wrapper {
   padding: 0 10px;
@@ -1229,11 +1271,40 @@ textarea {
 }
 textarea.form-textarea,
 select.form-select {
-  padding: 4px;
+  padding: 2px;
+}
+input.form-text,
+textarea.form-textarea{
+	border:1px solid #aaa;
+	box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;
+	padding-right:30px;
+	-moz-transition: padding .25s; 
+	-webkit-transition: padding .25s; 
+	-o-transition: padding .25s;
+	transition: padding .25s;
+	border-radius:2px;
+	-0-border-radius:2px;
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	-ms-border-radius:2px;
+}
+select.form-select{
+	border:1px solid #aaa;
+	box-shadow: 0px 0px 3px #ccc, 0 10px 15px #eee inset;
+	-moz-transition: padding .25s; 
+	-webkit-transition: padding .25s; 
+	-o-transition: padding .25s;
+	transition: padding .25s;
+	border-radius:2px;
+	-0-border-radius:2px;
+	-moz-border-radius:2px;
+	-webkit-border-radius:2px;
+	-ms-border-radius:2px;
 }
 input.form-text,
 textarea.form-textarea,
 select.form-select {
+	
   border: 1px solid #ccc;
 }
 input.form-submit:hover,
@@ -1248,7 +1319,10 @@ input.form-submit:focus {
   margin-top: 2px;
 }
 .form-item label {
-  font-size: 0.929em;
+  font-size:12px;
+  color:#426f94;
+  line-height:25px;
+  font-family:Verdana, Geneva, sans-serif;
 }
 .form-type-radio label,
 .form-type-checkbox label {
@@ -1648,3 +1722,110 @@ div.admin-panel .description {
 #footer-wrapper .poll .bar .foreground {
   background-color: #ddd;
 }
+
+/*bkp*/
+/*registration*/
+.page-user-fill-fields #footer-wrapper, .page-user-fill-fields #header, .page-user-fill-fields .form-item label{visibility:visible !important;}
+.page-user-fill-fields #footer-wrapper{display:block !important;}
+.page-user-fill-fields #main{
+	background-image:none !important;
+	width:960px !important;
+	margin:0px auto;
+	background-color:#F7F7F7 !important;
+	height:auto !important;
+	
+	}
+/*///registration*/
+.not-logged-in #main h1, .not-logged-in .form-item label{
+	visibility:hidden;
+	}
+.not-logged-in #header, .not-logged-in #footer-wrapper{
+	display:none;
+	}
+.not-logged-in #main-wrapper{margin-top:9%;}
+.not-logged-in #footer-wrapper{display:none;}
+.not-logged-in #main{
+	background:url(../images/login.jpg) no-repeat;
+	height:433px;
+	width:670px;
+	margin:0px auto;
+	background-position:center;
+	}
+.not-logged-in #main h1{
+	padding:0px;
+	margin:0px;
+	}
+.not-logged-in #user-login{
+	padding-top:165px;
+	float:right;
+	padding-right:6px;
+	}
+.not-logged-in input.form-text{
+	padding:8px 0px;
+	width:88%;
+	}
+.not-logged-in input.form-submit, a.button{
+	background:#1f872e;
+	background: -webkit-gradient(linear,left top,left bottom,from(#5eb830),to(#1f872e));
+	background: -moz-linear-gradient(top,#5eb830,#1f872e);
+	background: -o-linear-gradient(top,#5eb830,#1f872e);
+	background: -ms-linear-gradient(top,#5eb830,#1f872e);
+	color:#fff;
+	font-weight:bold;
+	border:2px solid #00923f;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	-o-border-radius:5px;
+	-ms-border-radius:5px;
+	}
+.not-logged-in input.form-submit:hover, a.button:hover{
+	background-color:#16704D;
+	background: -moz-linear-gradient(center top , #16704D, #4B9450);
+	background: -o-linear-gradient(center top , #16704D, #4B9450);
+	background: -webkit-gradient(linear,left top,left bottom,from(#16704D),to(#4B9450));
+	background: -ms-linear-gradient(center top , #16704D, #4B9450);
+	}
+.not-logged-in div.messages{
+	margin: 5px 15%;
+	}
+.not-logged-in #messages{padding-top:0px;}
+
+/*innerpage layout*/
+#main{
+	background:#f7f7f7;
+	-moz-box-shadow: 0 0 10px #888;
+	-webkit-box-shadow: 0 0 10px#888;
+	-o-box-shadow: 0 0 10px#888;
+	box-shadow: 0 0 10px #888;
+	}
+.not-logged-in #main{
+	-moz-box-shadow: 0 0 18px #888;
+	-webkit-box-shadow: 0 0 18px #888;
+	-o-box-shadow: 0 0 18px #888;
+	box-shadow: 0 0 18px #888;
+	}
+	
+.views-exposed-widget .description{
+	font-size:11px;
+	}
+.views-exposed-widget #edit-date-filter-min-wrapper{
+	float:left;
+	}
+.views-exposed-widget #edit-date-filter-max-wrapper{
+	float:left;
+	}
+.views-exposed-form #edit-combine-wrapper{
+	padding-right:8%;
+	}
+.views-exposed-form .views-exposed-widget .form-submit{
+	margin-top:2em;
+	}
+.form-item #field-pdf-package-values tr  th.field-label label{
+	color:#fff;
+	padding:0px 5px;
+	}
+.messages{
+	padding:0px;
+	margin:0px;
+	}
