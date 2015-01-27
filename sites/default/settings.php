@@ -1,5 +1,9 @@
 <?php
-
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', 1);
+ini_set('memory_limit', '-1');
+ini_set('post_max_size', '64M');
+ini_set('upload_max_filesize', '64M');
 /**
  * @file
  * Drupal site-specific configuration file.
@@ -210,12 +214,29 @@
  *   );
  * @endcode
  */
+ /*
 $databases = array (
   'default' => 
   array (
     'default' => 
     array (
-      'database' => 'medical',
+      'database' => 'rajeshsa_clinic',
+      'username' => 'rajeshsa_clinic',
+      'password' => 'Pgd7y3n9S5',
+      'host' => 'localhost',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
+);
+*/
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'clinic',
       'username' => 'root',
       'password' => 'root',
       'host' => 'localhost',
@@ -225,6 +246,7 @@ $databases = array (
     ),
   ),
 );
+
 
 /**
  * Access control for update.php script.

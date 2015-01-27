@@ -140,7 +140,7 @@ function taxonomy_dupecheck_vocabulary_validate($form, &$form_state) {
 function taxonomy_dupecheck_is_dupe_term($term, $vid, $tid = 0) {
 
   // Clean up the term to check
-  $term = trim($term);
+  $term = trim(strtolower($term));
 
   // Get the terms via SQL instead of taxonomy_get_tree
   // This helps with large vocabularies
@@ -159,7 +159,7 @@ function taxonomy_dupecheck_is_dupe_term($term, $vid, $tid = 0) {
 
     // Clean up the stored term. This helps for systems that
     // don't trim their terms before entry.
-    $found_term_name = trim($found_term->name);
+    $found_term_name = trim(strtolower($found_term->name));
 
     if (($case_sensitive && !strcmp($found_term_name, $term))
       || (!$case_sensitive && !strcasecmp($found_term_name, $term))) {

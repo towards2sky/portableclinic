@@ -37,7 +37,7 @@ function generate_pdf() {
     $obj['dob'] = get_dob("01/07/1985", '/');
     $obj['profession'] = 'Software Engg.';
     $obj['mobile'] = '9410093032';
-    $obj['patient_email'] = 'towards2sky@osscube.com';
+    $obj['patient_email'] = 'a_sharma@indiabookofrecords.in';
     $obj['pulse_rate'] = '200';
     $obj['bp_higher'] = 120;
     $obj['bp_lower'] = 80;;
@@ -116,29 +116,37 @@ function generate_pdf() {
     $pdf->Write(0, 'Age: '.$obj['dob'].' years');
     $x = $x-$third_word;
     
-    // Second Line
+            // Second Line
     
+//    $y = $y + $line_diff;
+//    $pdf->SetXY($x, $y);
+//    $pdf->Write(0, 'Profession:');
+//
+//    $x = $x + $v;
+//    $pdf->SetXY($x, $y);
+//    $pdf->Write(0, $obj['profession']);
+//    $x = $x - $v;
 
+    
     $y = $y + $line_diff;
     $pdf->SetXY($x, $y);
-    $pdf->Write(0, 'Profession:');
+    $pdf->Write(0, 'Mobile:');
 
     $x = $x + $v;
     $pdf->SetXY($x, $y);
-    $pdf->Write(0, $obj['profession']);
+    $pdf->Write(0, $obj['mobile']);
     $x = $x - $v;
 
 
     //$y = $y + $line_diff;
     $x = $x + $second_word;
     $pdf->SetXY($x, $y);
-    $pdf->Write(0, 'Mobile: '.$obj['mobile']);
+    $pdf->Write(0, 'Email:  ' . $obj['patient_email']);
     $x = $x - $second_word;
 
-    $x = $x + $third_word;
-    $pdf->SetXY($x, $y);
-    $pdf->Write(0, 'Email:  ' . $obj['patient_email']);
-    $x = $x - $third_word;
+//    $x = $x + $third_word;
+//    $pdf->SetXY($x, $y);
+//    $pdf->Write(0, 'Email:  ' . $obj['patient_email']);
 
     // Third Line
 
@@ -303,12 +311,18 @@ function generate_pdf() {
     
 
     $pdf->Output($first_page_pdf, 'D');
-    exit;
+    exit
+    ;
 }
 
-function prepair_final_bmi_pdf($obj) {
+function _prepair_first_bmi_pdf($obj) {
     global $user;
-user_generate_library_exist();
+   
+  //   drupal_set_message('saini saini');
+   // user_generate_library_exist();
+   // 
+   require_once(libraries_get_path('fpdf').'/fpdf.php');
+   require_once(libraries_get_path('fpdi').'/fpdi.php');
     //  $bg = 'public://bmi/files/bmi/default/background.jpg';
     $mbi_dir_path = "public://bmi";
     $bmi = trim($obj['bmi']);
@@ -325,7 +339,6 @@ user_generate_library_exist();
     $path = drupal_realpath($dir_path);
     $bmi_path = drupal_realpath($mbi_dir_path);
     drupal_chmod($path);
-    
     
     $bg = $bmi_path . '/default/background.jpg';
     $first_page_pdf = $path . '/first_page.pdf';
@@ -352,7 +365,6 @@ user_generate_library_exist();
     $third_word = 110;
     $v = 25;
 
-    
     // First Line   /---
     
     $pdf->SetXY($x, $y);
@@ -375,29 +387,37 @@ user_generate_library_exist();
     $pdf->Write(0, 'Age: '.$obj['dob'].' years');
     $x = $x-$third_word;
     
-    // Second Line
+           // Second Line
+    
+//    $y = $y + $line_diff;
+//    $pdf->SetXY($x, $y);
+//    $pdf->Write(0, 'Profession:');
+//
+//    $x = $x + $v;
+//    $pdf->SetXY($x, $y);
+//    $pdf->Write(0, $obj['profession']);
+//    $x = $x - $v;
+
     
     $y = $y + $line_diff;
     $pdf->SetXY($x, $y);
-    $pdf->Write(0, 'Profession:');
+    $pdf->Write(0, 'Mobile:');
 
     $x = $x + $v;
     $pdf->SetXY($x, $y);
-    $pdf->Write(0, $obj['profession']);
+    $pdf->Write(0, $obj['mobile']);
     $x = $x - $v;
 
 
     //$y = $y + $line_diff;
     $x = $x + $second_word;
     $pdf->SetXY($x, $y);
-    $pdf->Write(0, 'Mobile: '.$obj['mobile']);
+    $pdf->Write(0, 'Email:  ' . $obj['patient_email']);
     $x = $x - $second_word;
 
-    $x = $x + $third_word;
-    $pdf->SetXY($x, $y);
-    $pdf->Write(0, 'Email:  ' . $obj['patient_email']);
-    $x = $x - $third_word;
-
+//    $x = $x + $third_word;
+//    $pdf->SetXY($x, $y);
+//    $pdf->Write(0, 'Email:  ' . $obj['patient_email']);
     // Third Line
 
     $y = $y + $line_diff;
@@ -556,32 +576,104 @@ user_generate_library_exist();
 
     $pdf->Output($first_page_pdf, 'F');
 
-    $default_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
+  //  $default_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
+   
+   // $first_page_pdf;
+//if (file_exists($first_page_pdf) && file_exists($default_path)) {
+//    echo  $first_page_pdf;
+//}    
+// p($obj); exit;
+//    if (file_exists($first_page_pdf) && file_exists($default_path)) {
+//        // create final file for sant to user
+//        if (file_exists("$path/final.pdf")) {
+//            unlink("$path/final.pdf");
+//        }
+//        $Margepdf = new PDFMerger;
+//        $default_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
+//     
+//     
+//        $Margepdf->addPDF($first_page_pdf)
+//                ->addPDF($default_path)
+//                ->merge('file', $path . '/final.pdf');
+//        if (file_exists($path . '/final.pdf')) {
+//           
+//            // return $path.'/final.pdf'; 
+//        } else {
+//            drupal_set_message('Error in genearte final bmi pdf. Try again');
+//            drupal_goto();
+//        }
+//        
+//       //  p($obj); exit;
+//    } else {
+//       // drupal_set_message('No Prescription found this BMI amd Medical Condition. Contact to Admin');
+//        // drupal_goto();
+//    }
+}
+
+function _prepair_final_bmi_pdf($obj){
+    
+    require_once(libraries_get_path('tcpdf').'/tcpdf.php');
+    require_once(libraries_get_path('tcpdi').'/tcpdi.php');
+    global $user;
+    $mbi_dir_path = "public://bmi";
+    $bmi = trim($obj['bmi']);
+    $medical_condition = _user_generate_get_medical_condition_dir($obj['medical_condition']);
+    
+    $dir_path = "public://bmi/bydoctor/$user->uid/";
+
+    $path = drupal_realpath($dir_path);
+    $bmi_path = drupal_realpath($mbi_dir_path);
+    drupal_chmod($path);
+
+    $first_page_pdf = $path . '/first_page.pdf';
+    
+    //---------------------------------------
+     $default_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
+     
+     
     if (file_exists($first_page_pdf) && file_exists($default_path)) {
         // create final file for sant to user
         if (file_exists("$path/final.pdf")) {
             unlink("$path/final.pdf");
         }
-        $Margepdf = new PDFMerger;
-        $default_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
-        $Margepdf->addPDF($first_page_pdf)
-                ->addPDF($default_path)
-                ->merge('file', $path . '/final.pdf');
+        
+       $pdf = new TCPDI(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+// Add a page from a PDF by file path.
+       $pdf->AddPage();
+        
+        $pdf->setSourceFile($first_page_pdf);
+        $idx = $pdf->importPage(1);
+        $pdf->useTemplate($idx);
+
+$pdfdata = file_get_contents($default_path); // Simulate only having raw data available.
+
+$pagecount = $pdf->setSourceData($pdfdata); 
+for ($i = 1; $i <= $pagecount; $i++) { 
+    $tplidx = $pdf->importPage($i);
+    $pdf->AddPage();
+    $pdf->useTemplate($tplidx); 
+}
+
+$pdf->Output("$path/final.pdf", 'F');
+
         if (file_exists($path . '/final.pdf')) {
+           
             // return $path.'/final.pdf'; 
+             //drupal_set_message('Final file exist');
         } else {
             drupal_set_message('Error in genearte final bmi pdf. Try again');
             drupal_goto();
         }
+        
+       //  p($obj); exit;
     } else {
        // drupal_set_message('No Prescription found this BMI amd Medical Condition. Contact to Admin');
         // drupal_goto();
     }
 }
 
-
 function _user_generate_get_medical_condition_dir($medical_condition) {
-    
+
      $dir = str_replace(' ', '_',strtolower(trim($medical_condition)));
      return $dir;
 }

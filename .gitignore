@@ -1,3 +1,9 @@
 /nbproject/private/
 nbproject/*
 sites/default/files/*
+sites/all/libraries/PDFMerger/filters/
+sites/all/libraries/fpdf/
+sites/all/libraries/fpdi/
+sites/all/libraries/mpdf/
+sites/all/libraries/tcpdf/
+sites/all/libraries/tcpdi/
