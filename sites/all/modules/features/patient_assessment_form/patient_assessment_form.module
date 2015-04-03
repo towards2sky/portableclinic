@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Patient Assessment form feature.
- */
-
-include_once 'patient_assessment_form.features.inc';
