@@ -752,7 +752,20 @@ function get_secound_page_pdf_path($obj){
         $bmi_dir_path = "public://bmi";
         $bmi_path = drupal_realpath($bmi_dir_path);
         $bmi = trim($obj['bmi']);
+        $gender = trim($obj['gender']);
+        $age = trim($obj['dob']);
+        $age_type = '';
+        if($age <= 14) {
+            $age_type = '0-14';
+        }else if($age >14 && $age <= 65) {
+            $age_type = '14-65';
+        } else if($age >65) {
+            $age_type = '65-100';
+        } else {
+            exit('Wrong age type');
+        }
         $secound_page_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
+        $secound_page_path = $bmi_path . "/byadmin/$gender/$age_type/$medical_condition/$bmi/second_part.pdf";
     }
     return $secound_page_path;
 }
