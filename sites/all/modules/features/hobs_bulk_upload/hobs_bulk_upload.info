@@ -1,0 +1,12 @@
+name = HOBS Bulk Upload
+core = 7.x
+package = Features
+version = 7.x-1.0
+project = hobs_bulk_upload
+dependencies[] = features
+dependencies[] = field_collection
+features[features_api][] = api:2
+features[field_base][] = field_hobs_coefficient
+features[field_instance][] = node-upload_hobs_pdf-field_hobs_coefficient
+features[node][] = upload_hobs_pdf
+project path = sites/all/modules/features

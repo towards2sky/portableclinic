@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser
+END
+comment.js
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/comment.js
+END
+fragment.js
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/fragment.js
+END
+text.js
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/text.js
+END
+filter.js
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/filter.js
+END
+element.js
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/element.js
+END
+cdata.js
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/cdata.js
+END
+basicwriter.js
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/svn/!svn/ver/8350/RPI/branches/phase1/sites/all/modules/community/ckeditor/ckeditor/ckeditor/_source/core/htmlparser/basicwriter.js
+END

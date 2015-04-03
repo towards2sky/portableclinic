@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js
+END
+base.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/base.js
+END
+ajax_view.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/ajax_view.js
+END
+views-contextual.js
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/views-contextual.js
+END
+ajax.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/ajax.js
+END
+views-admin.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/views-admin.js
+END
+views-list.js
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/views-list.js
+END
+jquery.ui.dialog.patch.js
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/8241/RPI/branches/phase1/sites/all/modules/community/views/js/jquery.ui.dialog.patch.js
+END

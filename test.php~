@@ -1,0 +1,16 @@
+<?php
+$to = "proj@anjultomar.in";
+$subject = "Portable clini Test mail";
+$message = "Portable clini Test mail Portable clini Test mail Portable clini Test mail";
+if (mail($to, $subject, $message)) {
+
+ echo('<p>Mail sent successfully.</p>');
+
+} else {
+
+ echo('<p>Mail could not be sent.</p>');
+
+}
+
+?>
+

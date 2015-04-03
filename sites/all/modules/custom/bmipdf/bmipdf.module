@@ -1,0 +1,155 @@
+<?php
+
+function bmipdf_form_alter(&$form, &$form_state, $form_id) {
+    global $user; 
+    //p($form_id); 
+    switch ($form_id) {
+        case 'patient_assessment_form_node_form':
+            if(isset($form['field_medical_condition']['und'][0]['select_other_list']['#options']['other'])){
+              unset($form['field_medical_condition']['und'][0]['select_other_list']['#options']['other']);  
+            }
+            break;
+        case 'upload_pdf_for_bmi_node_form':
+       	    $form['actions']['submit']['#submit'][] = '_bmipdf_save_bmi_pdf_file';
+            $form['actions']['submit']['#submit'][] = 'custom_redirect_upload_pdf_for_bmi_node_form';
+            break;
+        case 'upload_hobs_pdf_node_form':
+       	    $form['actions']['submit']['#submit'][] = '_hobspdf_save_hobs_pdf_file';
+            $form['actions']['submit']['#submit'][] = 'custom_redirect_upload_pdf_for_hobs_node_form';
+            break;
+    }
+}
+
+// HOBS ///////////////
+
+function _hobspdf_save_hobs_pdf_file($form, &$form_state) {
+    
+     $hobs_title = $form_state['values']['title'];
+    //$medical_condition = $form_state['values']['field_medical_condition_term']['und'][0]['name'];
+    //print '<pre>';
+    //print_r($form_state['values']['field_hobs_coefficient']['und']);
+    //print '</pre>'; exit;
+    $files_group = $form_state['values']['field_hobs_coefficient']['und'];
+   
+    $files_object = array();
+    foreach($files_group as $single_group) {
+        $fobject = array();
+       if(is_array($single_group['field_hobs_pdf']) && ($single_group['field_hobs_pdf']['und'][0]['fid'] > 0)){
+        $fobject['gender'] = $single_group['field_gender']['und'][0]['value'];
+        $fobject['age_type'] = $single_group['field_age_type']['und'][0]['value'];
+        $tobj = taxonomy_term_load($single_group['field_hobs_medical_condition']['und'][0]['tid']);
+
+        $fobject['medical_condition'] = $tobj->name;
+        $fobject['hobs_value'] = $single_group['field_hobs_value']['und'][0]['value'];
+        $fobject['fid'] = $single_group['field_hobs_pdf']['und'][0]['fid'];
+        $files_object[] = $fobject;
+       }
+    }
+    
+    //p($files_object); exit;
+    if(count($files_object)) {
+        foreach ($files_object as $file) {
+            _hobspdf_save_hobs_pdf($file);
+        }
+    }
+
+}
+
+
+/**
+ * Save pdf according to BMI and medical condition
+ */
+function _hobspdf_save_hobs_pdf($obj) {
+    
+    //p($obj); exit;
+    $fid = $obj['fid'];
+    $gender = trim($obj['gender']);
+    $age_type = trim($obj['age_type']);
+    $medical_condition = _bmipdf_get_medical_condition_dir($obj['medical_condition']);
+    $hobs_value = trim($obj['hobs_value']);
+    
+    $fileObj = file_load($fid);
+    $destination = "public://hobs/byadmin/$gender/$age_type/$medical_condition/$hobs_value";
+    if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
+        exit('Invalid file path');
+    }
+    $copied = file_copy($fileObj, $destination . '/second_part.pdf', FILE_EXISTS_REPLACE);
+    
+    if($copied){ return $destination . '/second_part.pdf'; } else { return FALSE; }
+}
+
+/// HOBS ///////////////
+function _bmipdf_bmivalue_validation($form, &$form_state) {
+        $bmi_value = trim($form_state['values']['title']);
+        if (is_numeric($bmi_value) ){ 
+          if ($bmi_value < 10 || $bmi_value > 60){ 
+            form_set_error('title', t('BMI value should be 11 to 60.')); 
+          }
+        } else { 
+            form_set_error('title', t('Invalid BMI value.')); 
+        } 
+}
+
+function _bmipdf_save_bmi_pdf_file($form, &$form_state) {
+    
+    
+    $bmi = $form_state['values']['title'];
+    //$medical_condition = $form_state['values']['field_medical_condition_term']['und'][0]['name'];
+    
+    $files_group = $form_state['values']['field_pdf_package']['und'];
+   
+    $files_object = array();
+    foreach($files_group as $single_group) {
+        $fobject = array();
+       if(is_array($single_group['field_pdf']) && ($single_group['field_pdf']['und'][0]['fid'] > 0)){
+        $fobject['bmi'] = $bmi;
+        $fobject['medical_condition'] = $single_group['field_pdf_medical_condition']['und'][0]['name'];
+        $fobject['fid'] = $single_group['field_pdf']['und'][0]['fid'];
+        $files_object[] = $fobject;
+       }
+    }
+   // exit;
+  // p($files_object); exit;
+    if(count($files_object)) {
+        foreach ($files_object as $file) {
+            _bmipdf_save_bmi_pdf($file);
+        }
+    }
+    
+}
+
+/**
+ * Save pdf according to BMI and medical condition
+ */
+function _bmipdf_save_bmi_pdf($obj) {
+    $fid = $obj['fid'];
+    $bmi = $obj['bmi'];
+    $medical_condition = _bmipdf_get_medical_condition_dir($obj['medical_condition']);
+    $fileObj = file_load($fid);
+    $destination = "public://bmi/byadmin/$bmi/$medical_condition";
+    if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
+        exit('Invalid file path');
+    }
+    $copied = file_copy($fileObj, $destination . '/second_part.pdf', FILE_EXISTS_REPLACE);
+    
+    if($copied){ return $destination . '/second_part.pdf'; } else { return FALSE; }
+}
+
+
+function _bmipdf_get_medical_condition_dir($medical_condition) {
+    
+     $dir = str_replace(' ', '_',strtolower(trim($medical_condition)));
+     return $dir;
+}
+
+function custom_redirect_upload_pdf_for_bmi_node_form($form, &$form_state) {
+    unset($_GET['destination']);
+    unset($_REQUEST['edit']['destination']);
+    $form_state['redirect'] = 'node/add/upload-pdf-for-bmi';
+}
+
+function custom_redirect_upload_pdf_for_hobs_node_form ($form, &$form_state) {
+    unset($_GET['destination']);
+    unset($_REQUEST['edit']['destination']);
+    $form_state['redirect'] = 'node/add/upload-hobs-pdf';    
+}

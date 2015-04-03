@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the HOBS Bulk Upload feature.
+ */
+
+include_once 'hobs_bulk_upload.features.inc';
