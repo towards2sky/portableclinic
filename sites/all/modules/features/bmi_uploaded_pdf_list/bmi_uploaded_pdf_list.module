@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the BMI UPLOADED PDF LIST feature.
+ */
+
+include_once 'bmi_uploaded_pdf_list.features.inc';

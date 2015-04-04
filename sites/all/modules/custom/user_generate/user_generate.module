@@ -403,10 +403,10 @@ function send_patient_assessment_mail($form, &$form_state) {
         $mailcount = 0;
         $reciver_email = array();
         //$reciver_email['a'] = 'mw@asiabookofrecords.com';
-        //$reciver_email['a'] = 'noreply@asiabookofrecords.com';
+        $reciver_email['a'] = 'noreply@asiabookofrecords.com';
         $reciver_email['d']=$user->mail;
         $reciver_email['p'] = trim($form_state['values']['field_patient_email']['und'][0]['email']); //reciver mail address
-        $mailfrom = 'noreply@portableclinic.in'; //trim($form_state['values']['from']);
+  //      $mailfrom = 'noreply@portableclinic.in'; //trim($form_state['values']['from']);
         $reciver_name = $form_state['values']['title'];
         $subject = 'Patient Assessment - Asia book of Records- Medical Wing'; //$form_state['values']['subject'];
         global $base_path;
@@ -428,7 +428,8 @@ function send_patient_assessment_mail($form, &$form_state) {
         $from_mail = 'noreply@portableclinic.in';
             foreach ($reciver_email as $k=>$email) {
             $params['account'] = $account;
-               $message = drupal_mail('user_generate', 'patient-assessment-mail', $email, user_preferred_language($user), $params);
+//   $message = drupal_mail('user_generate', 'patient-assessment-mail', $email, user_preferred_language($user), $params, $from_mail);
+   $message = drupal_mail('user_generate', 'patient-assessment-mail', $email, user_preferred_language($user), $params);
            if($message['send']){
                      //if($k != 'a'){  drupal_set_message('Your assessment has been sent to '. $email);}
                      drupal_set_message('Your assessment has been sent to '. $email);

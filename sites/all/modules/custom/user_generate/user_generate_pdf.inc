@@ -324,7 +324,7 @@ function _prepair_first_bmi_pdf($obj) {
    require_once(libraries_get_path('fpdf').'/fpdf.php');
    require_once(libraries_get_path('fpdi').'/fpdi.php');
     //  $bg = 'public://bmi/files/bmi/default/background.jpg';
-    $mbi_dir_path = "public://bmi";
+    $bmi_dir_path = "public://bmi";
     $bmi = trim($obj['bmi']);
     $medical_condition = _user_generate_get_medical_condition_dir($obj['medical_condition']);
     
@@ -337,7 +337,7 @@ function _prepair_first_bmi_pdf($obj) {
     }
 
     $path = drupal_realpath($dir_path);
-    $bmi_path = drupal_realpath($mbi_dir_path);
+    $bmi_path = drupal_realpath($bmi_dir_path);
     drupal_chmod($path);
     
     $bg = $bmi_path . '/default/background.jpg';
@@ -764,7 +764,7 @@ function get_secound_page_pdf_path($obj){
         } else {
             exit('Wrong age type');
         }
-        $secound_page_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
+      //  $secound_page_path = $bmi_path . "/byadmin/$bmi/$medical_condition/second_part.pdf";
         $secound_page_path = $bmi_path . "/byadmin/$gender/$age_type/$medical_condition/$bmi/second_part.pdf";
     }
     return $secound_page_path;
