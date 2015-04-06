@@ -110,11 +110,11 @@ $("#edit-field-previous-weight-und" ).change(function() {
 $("#edit-field-present-weight-und" ).change(function() {
        if(hobs_perameter_is_ready()){ calculate_hobs();}
     });
-    
-/// Validation for BMI & HOBS    
+   
+$("#edit-field-week-type-und option[value=Week2]").hide();
+$("#edit-field-week-type-und option[value=Week3]").text('Week 2');
 $("#edit-submit").click(function() {
-
-    if( $("#edit-field-week-type-und" ).val() == '_none'){
+     if( $("#edit-field-week-type-und" ).val() == '_none'){
         alert( "Please select week type." );
         return false;
     }else if ($("#edit-field-week-type-und" ).val() == 'Week3') {
